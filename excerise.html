@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Horizontal Grouped Bar – Quarterly Sales</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:40px;background:#f7f7f7}
+    .chart-box{max-width:900px;margin:0 auto;background:#fff;padding:25px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.1)}
+    h2{text-align:center;margin-bottom:20px}
+  </style>
+</head>
+<body>
+
+<div class="chart-box">
+  <h2>Horizontal Grouped-Bar Chart</h2>
+  <canvas id="grouped"></canvas>
+</div>
+
+<script>
+/* ----------  data from CSV  ---------- */
+const quarters = ['Q1','Q2','Q3','Q4'];
+const john     = [100000, 94000, 120000, 110000];
+const jane     = [ 87000,110000, 140000, 200000];
+const thomas   = [ 43000, 50000,  90000, 100000];
+
+/* ----------  build chart  ---------- */
+new Chart(document.getElementById('grouped'),{
+  type:'bar',
+  data:{
+    labels:quarters,
+    datasets:[
+      {label:'John',   data:john,   backgroundColor:'#1f77b4'},
+      {label:'Jane',   data:jane,   backgroundColor:'#ff7f0e'},
+      {label:'Thomas', data:thomas, backgroundColor:'#2ca02c'}
+    ]
+  },
+  options:{
+    indexAxis:'y',          // horizontal bars
+    responsive:true,
+    plugins:{legend:{position:'bottom'}},
+    scales:{x:{beginAtZero:true}}
+  }
+});
+</script>
+
+</body>
+</html>

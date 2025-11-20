@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Exercise 2 – Line Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+    .line { fill: none; stroke: steelblue; stroke-width: 2; }
+    .dot { fill: steelblue; stroke: #fff; stroke-width: 1.5; }
+    .axis text { font-size: 12px; }
+    .axis-label { font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<h2 id="title">Subject Scores Line Chart</h2>
+<svg id="line" width="500" height="300"></svg>
+
+<script>
+  const dataset = [
+    { subject: "Math", score: 80 },
+    { subject: "Science", score: 120 },
+    { subject: "English", score: 60 }
+  ];
+
+  const margin = {top: 30, right: 30, bottom: 50, left: 60};
+  const width = 500 - margin.left - margin.right;
+  const height = 300 - margin.top - margin.bottom;
+
+  const svg = d3.select("#line")
+                .append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+  // Scales
+  const xScale = d3.scalePoint()
+                   .domain(dataset.map(d => d.subject))
+                   .range([0, width])
+                   .padding(0.5);
+
+  const yScale = d3.scaleLinear()
+                   .domain([0, d3.max(dataset, d => d.score) + 20])
+                   .nice()
+                   .range([height, 0]);
+
+  // Axes
+  svg.append("g")
+     .attr("class", "axis")
+     .attr("transform", `translate(0,${height})`)
+     .call(d3.axisBottom(xScale));
+
+  svg.append("g")
+     .attr("class", "axis")
+     .call(d3.axisLeft(yScale));
+
+  // Axis labels
+  svg.append("text")
+     .attr("class", "axis-label")
+     .attr("x", width / 2)
+     .attr("y", height + 40)
+     .attr("text-anchor", "middle")
+     .text("Subject");
+
+  svg.append("text")
+     .attr("class", "axis-label")
+     .attr("transform", "rotate(-90)")
+     .attr("x", -height / 2)
+     .attr("y", -margin.left + 15)
+     .attr("text-anchor", "middle")
+     .text("Score");
+
+  // Line generator
+  const line = d3.line()
+                 .x(d => xScale(d.subject))
+                 .y(d => yScale(d.score));
+
+  // Draw line
+  svg.append("path")
+     .datum(dataset)
+     .attr("class", "line")
+     .attr("d", line);
+
+  // Circles at data points
+  svg.selectAll(".dot")
+     .data(dataset)
+     .enter()
+     .append("circle")
+     .attr("class", "dot")
+     .attr("cx", d => xScale(d.subject))
+     .attr("cy", d => yScale(d.score))
+     .attr("r", 5);
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Exercise 1 – Pie Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <style>
+    body { font-family: Arial, sans-serif; display: flex; flex-direction: column; align-items: center; }
+    #legend { display: flex; gap: 15px; margin-top: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .swatch { width: 15px; height: 15px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<h2 id="title">Subject Scores Distribution</h2>
+<svg id="pie" width="400" height="400"></svg>
+<div id="legend"></div>
+
+<script>
+  const dataset = [
+    { subject: "Math", score: 80 },
+    { subject: "Science", score: 120 },
+    { subject: "English", score: 60 }
+  ];
+
+  const width = 400, height = 400;
+  const radius = Math.min(width, height) / 2 - 20;
+
+  const svg = d3.select("#pie")
+                .append("g")
+                .attr("transform", `translate(${width/2},${height/2})`);
+
+  const color = d3.scaleOrdinal()
+                  .domain(dataset.map(d => d.subject))
+                  .range(d3.schemeCategory10);
+
+  const pie = d3.pie()
+                .value(d => d.score);
+
+  const arc = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius);
+
+  const labelArc = d3.arc()
+                     .innerRadius(radius * 0.6)
+                     .outerRadius(radius * 0.6);
+
+  const slices = svg.selectAll("path")
+                    .data(pie(dataset))
+                    .enter()
+                    .append("path")
+                    .attr("d", arc)
+                    .attr("fill", d => color(d.data.subject))
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 2);
+
+  svg.selectAll("text")
+     .data(pie(dataset))
+     .enter()
+     .append("text")
+     .attr("transform", d => `translate(${labelArc.centroid(d)})`)
+     .attr("text-anchor", "middle")
+     .style("font-size", "14px")
+     .text(d => `${d.data.subject}: ${d.data.score}`);
+
+  // Legend
+  const legend = d3.select("#legend")
+                   .selectAll("div")
+                   .data(dataset)
+                   .enter()
+                   .append("div")
+                   .attr("class", "legend-item");
+
+  legend.append("div")
+        .attr("class", "swatch")
+        .style("background-color", d => color(d.subject));
+
+  legend.append("span")
+        .text(d => d.subject);
+</script>
+</body>
+</html>
